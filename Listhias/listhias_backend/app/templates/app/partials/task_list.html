@@ -1,0 +1,9 @@
+<div id='task-list'>
+    <ul class='divide-y divide-gray-300 space-y-4'>
+        {% for task in tasks %}
+            {% include "app/partials/task.html" with task=task %}
+        {% empty %}
+            <h1>No tasks available</h1>
+        {% endfor %}
+    </ul>
+</div>

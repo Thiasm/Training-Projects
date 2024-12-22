@@ -1,0 +1,38 @@
+<li class="gap-2" id="task-item-{{ task.id }}">
+
+       
+        <input
+            hx-put={% url 'complete_task' task.id %}
+            hx-target="#task-item-{{ task.id }}"
+            hx-swap="outerHTML"
+            type="checkbox"
+            {% if task.complete %}checked{% endif %}
+        />
+
+
+         {{task.title}}
+
+     <form action="{% url 'edit_task' task.id %}" style="display:inline;">
+        <input type="submit" value="Edit">
+    </form>
+
+     <form
+        hx-delete={% url 'delete_task' task.id %}
+        hx-target="#task-list"
+        hx-swap="outerHTML"
+        hx-confirm='Are you sure ?'
+        style="display:inline;"
+        >
+        <input type="submit" value="Delete">
+    </form>
+
+</li>
+
+<script>
+    document.addEventListener("htmx:configRequest", function (event) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        if (csrfToken) {
+            event.detail.headers['X-CSRFToken'] = csrfToken; // Ajoute le token CSRF aux en-têtes
+        }
+    });
+</script>

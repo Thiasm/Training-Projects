@@ -1,0 +1,24 @@
+<div class='py-5'>
+    <form
+        hx-post='/add_task/'
+        hx-target="#task-list"
+        hx-swap="innerHTML"
+    >
+        {% csrf_token %}
+        <input
+            name="task_title"
+            type="text"
+            placeholder="Add a new task"
+            class="text-center border border-slate-800 rounded-md"
+            required
+        >
+        <button type="submit" class='rounded p-3 bg-gray-800 text-white'>+</button>
+    </form>
+</div>
+
+<script>
+    document.body.addEventListener('htmx:afterRequest', function (event) {
+        const form = document.querySelector('form');
+        form.reset(); // Reset all fields in the form
+    });
+</script>
