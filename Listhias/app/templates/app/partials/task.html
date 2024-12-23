@@ -1,31 +1,28 @@
-<li class="gap-2" id="task-item-{{ task.id }}">
+<li id="task-item-{{ task.id }}" class="flex items-center gap-4 py-2 w-full">
 
-       
-        <input
-            hx-put={% url 'complete_task' task.id %}
-            hx-target="#task-item-{{ task.id }}"
-            hx-swap="outerHTML"
-            type="checkbox"
-            {% if task.complete %}checked{% endif %}
-        />
-
-
-         {{task.title}}
-
-     <form action="{% url 'edit_task' task.id %}" style="display:inline;">
-        <input type="submit" value="Edit">
-    </form>
-
-     <form
-        hx-delete={% url 'delete_task' task.id %}
+    <!-- Task Completion Checkbox -->
+    <input
+        type="checkbox"
+        hx-put={% url 'complete_task' task.id %}
+        {% comment %} hx-trigger="change" {% endcomment %}
         hx-target="#task-list"
         hx-swap="outerHTML"
-        hx-confirm='Are you sure ?'
-        style="display:inline;"
-        >
-        <input type="submit" value="Delete">
-    </form>
+        class='w-5 h-5'
+        aria-label="Mark task '{{ task.title }}' as complete"
+        {% if task.complete %}checked{% endif %}
+    />
 
+    <!-- Edit Task Button -->
+    <button
+        hx-get="{% url 'edit_task' task.id %}"
+        hx-target="#modal-content"
+        hx-swap="innerHTML"
+        hx-on="htmx:afterRequest:openModal()"
+        class="text-gray-800 hover:text-blue-800 font-bold text-base"
+        aria-label="Edit task '{{ task.title }}'"
+    >
+    {{task.title}}
+    </button>
 </li>
 
 <script>

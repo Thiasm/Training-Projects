@@ -1,14 +1,6 @@
-    {% extends "app/base.html" %}
-
-    {% block content %}
-        <div>
-            <div>
-                {% include "app/partials/task_form.html" %}
-            </div>
-
-            <div>
-                {% include "app/partials/task_list.html" %}
-            </div>
-            
-        </div>
-    {% endblock %}
+{% extends "app/base.html" %}
+{% block content %}
+    {% include "app/partials/task_form.html" %}
+    {% include "app/partials/search.html" %}
+    {% include "app/partials/task_list.html" %}
+{% endblock %}

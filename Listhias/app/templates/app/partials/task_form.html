@@ -1,18 +1,24 @@
-<div class='py-5'>
+<div class="flex items-center justify-center p-5">
     <form
         hx-post='/add_task/'
         hx-target="#task-list"
         hx-swap="innerHTML"
+        class="rounded"
     >
         {% csrf_token %}
         <input
             name="task_title"
             type="text"
             placeholder="Add a new task"
-            class="text-center border border-slate-800 rounded-md"
+            class="rounded px-4 py-2 text-center border border-gray-500"
             required
         >
-        <button type="submit" class='rounded p-3 bg-gray-800 text-white'>+</button>
+        <button
+            type="submit"
+            class='rounded p-2 bg-gray-500 hover:bg-gray-700 text-white'
+        >
+            Add
+        </button>
     </form>
 </div>
 

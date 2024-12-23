@@ -1,0 +1,85 @@
+<div class="p-3 relative">
+    <!-- Close Button -->    
+    <button
+        class="text-gray-500 hover:text-red-700 rounded absolute top-0 right-0"
+        onclick="closeModal()"
+        aria-label="Close Modal"
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+    </button>
+
+    <!-- Title -->
+    <h1 id="edit-task-title" class="font-bold text-center mb-4 text-lg text-gray-800">Edit Task</h1>
+
+    <!-- Form -->
+    <form
+        hx-post="{% url 'edit_task' task.id %}"
+        hx-target="#task-item-{{ task.id }}"
+        hx-swap="outerHTML"
+        class="space-y-4"
+    >
+        {% csrf_token %}
+        <!-- Task Title -->
+        <div>
+            <label for="task-title" class="text-sm font-medium text-gray-700">Title</label>
+            <input
+                id="task-title"
+                name="task_title"
+                class="w-full border rounded px-2 py-2"
+                type="text"
+                value="{{ task.title }}"
+                required
+            />
+        </div>  
+
+        <!-- Task Description -->
+        <div>
+            <label for="task-description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea
+                id="task-description"
+                name="task_description"
+                class="w-full border rounded px-2 py-1"
+                rows="4"
+            >{{ task.description }}</textarea>
+        </div>
+
+        <!-- Task Complete Checkbox -->
+        <div class="flex items-center">
+            <input
+                type="checkbox"
+                id="task-complete"
+                name="task_complete"
+                class='w-4 h-4'
+                {% if task.complete %}checked{% endif %}
+            />
+            <label for="task-complete" class="text-sm font-medium ml-2 text-gray-700">Complete</label>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-center mt-6 space-x-6">
+            
+            <!-- Delete Button -->
+            <button
+                hx-delete="{% url 'delete_task' task.id %}"
+                hx-target="#task-list"
+                hx-swap="outerHTML"
+                hx-confirm="Are you sure ?"
+                onclick="closeModal()"
+                aria-label="Delete Task"
+                class="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded"
+            >
+                Delete
+            </button>
+
+            <!-- Save Button -->
+            <button
+                class="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded"
+                onclick="closeModalIfNotEmpty()"
+            >
+                Save
+            </button>
+        </div>
+    </form>
+</div>
