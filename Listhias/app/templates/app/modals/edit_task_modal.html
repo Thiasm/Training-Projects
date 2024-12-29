@@ -1,73 +1,66 @@
 <div class="p-3 relative">
-    <!-- Close Button -->    
-    <button
-        class="text-gray-500 hover:text-red-700 rounded absolute top-0 right-0"
-        onclick="closeModal()"
-        aria-label="Close Modal"
-    >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-    </button>
 
     <!-- Title -->
-    <h1 id="edit-task-title" class="font-bold text-center mb-4 text-lg text-gray-800">Edit Task</h1>
+    <h1 id="edit-item-title" class="font-bold text-center mb-4 text-lg text-gray-800">Edit Item</h1>
 
     <!-- Form -->
     <form
-        hx-post="{% url 'edit_task' task.id %}"
-        hx-target="#task-item-{{ task.id }}"
+        hx-post="{% url 'edit_item' item.id %}"
+        hx-target="#task-item-{{ item.id }}"
         hx-swap="outerHTML"
         class="space-y-4"
     >
         {% csrf_token %}
-        <!-- Task Title -->
+        
+        <!-- Item Title -->
         <div>
-            <label for="task-title" class="text-sm font-medium text-gray-700">Title</label>
+            <label for="item-title" class="text-sm font-medium text-gray-700">Title</label>
             <input
-                id="task-title"
-                name="task_title"
+                id="item-title"
+                name="item_title"
                 class="w-full border rounded px-2 py-2"
                 type="text"
-                value="{{ task.title }}"
+                value="{{ item.title }}"
                 required
             />
         </div>  
 
-        <!-- Task Description -->
+        <!-- Item Description -->
         <div>
-            <label for="task-description" class="block text-sm font-medium text-gray-700">Description</label>
+            <label for="item-description" class="block text-sm font-medium text-gray-700">Description</label>
             <textarea
-                id="task-description"
-                name="task_description"
+                id="item-description"
+                name="item_description"
                 class="w-full border rounded px-2 py-1"
                 rows="4"
-            >{{ task.description }}</textarea>
+            >{{ item.description }}</textarea>
         </div>
 
-        <!-- Task Complete Checkbox -->
+        <!-- Item Complete Checkbox -->
         <div class="flex items-center">
             <input
                 type="checkbox"
-                id="task-complete"
-                name="task_complete"
+                id="item-complete"
+                name="item_complete"
                 class='w-4 h-4'
-                {% if task.complete %}checked{% endif %}
+                {% if item.complete %}checked{% endif %}
             />
-            <label for="task-complete" class="text-sm font-medium ml-2 text-gray-700">Complete</label>
+            <label for="item-complete" class="text-sm font-medium ml-2 text-gray-700">Complete</label>
         </div>
 
         <!-- Action Buttons -->
         <div class="flex justify-center mt-6 space-x-6">
-            
+
             <!-- Delete Button -->
             <button
-                hx-delete="{% url 'delete_task' task.id %}"
+                type='button'
+                onclick="closeModal()"
+                aria-label="Delete Item"
+                hx-delete="{% url 'delete_item' item.id %}"
                 hx-target="#task-list"
                 hx-swap="outerHTML"
                 hx-confirm="Are you sure ?"
-                onclick="closeModal()"
-                aria-label="Delete Task"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                 class="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded"
             >
                 Delete
@@ -75,8 +68,10 @@
 
             <!-- Save Button -->
             <button
-                class="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded"
-                onclick="closeModalIfNotEmpty()"
+                type='submit'
+                onclick="closeModalIfNotEmpty('item-title')"
+                class="bg-gray-600 hover:bg-gray-800 text-white py-2 px-4 rounded"
+                aria-label="Save Item"
             >
                 Save
             </button>

@@ -1,13 +1,9 @@
-<div id='task-list' class='flex justify-center w-full'>
-    <ul class='divide-y divide-gray-300 w-full max-w-xl'>
-        {% for task in tasks %}
-            {% include "app/partials/task.html" with task=task %}
-        {% empty %}
-            <h1
-                class="text-gray-800 font-bold text-base"
-            >
-                No tasks available
-            </h1>
-        {% endfor %}
-    </ul>
-</div>
+<ul id='task-list' class='divide-y divide-gray-300 w-full max-w-xl'>
+    {% for item in items %}
+        {% include "app/partials/task.html" with item=item %}
+    {% empty %}
+        <h1 class="text-gray-800 font-bold text-base">
+            No items available
+        </h1>
+    {% endfor %}
+</ul>

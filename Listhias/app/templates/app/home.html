@@ -1,0 +1,19 @@
+{% extends "app/base.html" %}
+{% block content %}
+    <div>
+        <div class='flex justify-between items-center p-3 bg-gray-700'>
+            <div class='flex'>
+                {% include "app/partials/add_item.html" with gea='add_category' %}
+            </div>
+            <div class='flex'>
+                <h1 class='font-bold text-2xl mr-20 text-white text-gray-800'>Category</h1>
+            </div>
+            <div class='flex'>
+                {% include "app/partials/search.html" with target='#category-list' %}
+            </div>
+        </div>
+        <div class='flex justify-center w-full pt-5'>
+            {% include "app/partials/category_list.html" %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,6 +1,37 @@
 {% extends "app/base.html" %}
 {% block content %}
-    {% include "app/partials/task_form.html" %}
-    {% include "app/partials/search.html" %}
-    {% include "app/partials/task_list.html" %}
+    <div>
+        <div class='flex justify-between items-center p-3 bg-gray-700'>
+            <div class='flex'>
+                {% include "app/partials/add_item.html" with gea='add_item' %} 
+                {% comment %} FIX How to manage the URL {% endcomment %}
+            </div>
+            <div class='flex'>
+                <h1 class='font-bold text-2xl text-white text-gray-800'>
+                    {{category.title}}
+                    {% comment %} FIX Manage the title {% endcomment %}
+                </h1>
+            </div>
+            <div class='flex space-x-4'> 
+                {% include "app/partials/search.html" with target='#task-list' %}
+                {% include "app/partials/filter.html" with target='#task-list' %}
+                {% comment %} FIX How to manage the Target {% endcomment %}
+            </div>
+        </div>
+        <div class='flex flex justify-center w-full pt-5'>
+            {% include "app/partials/task_list.html" %}
+            {% comment %} {% include "app/partials/item_list.html" %}  {% endcomment %}
+            {% comment %} Or Whatever the Category is {% endcomment %}
+        </div>
+    </div>
 {% endblock %}
+
+<script>
+    document.addEventListener("htmx:configRequest", function (event) {
+        console.log('Send Request ' + document.querySelector('[name=csrfmiddlewaretoken]').value)
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        if (csrfToken) {
+            event.detail.headers['X-CSRFToken'] = csrfToken; // Ajoute le token CSRF aux en-têtes
+        }
+    });
+</script>

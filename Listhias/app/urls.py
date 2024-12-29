@@ -1,11 +1,19 @@
 from django.urls import path
-from .views import TaskList, add_task, edit_task, delete_task, complete_task, edit_task
+from .views import ItemList, add_item, edit_item, delete_item, complete_item, edit_item, CategoryList, add_category
 
 urlpatterns = [
-    path('', TaskList.as_view(), name='todo_list'),
-    path('add_task/', add_task, name='add_task'),
-    path('edit_task/<int:id>', edit_task, name='edit_task'),
-    path('delete_task/<int:id>', delete_task, name='delete_task'),
-    path('complete_task/<int:id>', complete_task, name='complete_task'),
-    path('edit_task/<int:id>', edit_task, name='edit_task')
+    path('', CategoryList.as_view(), name='home'),
+    path('add_category/', add_category, name='add_category'),
+    # Remove Category
+    # Edit Category
+
+    # FIX <category>/
+    path('test/', ItemList.as_view(), name='view'),
+
+    path('add_item/', add_item, name='add_item'),
+    path('edit_item/<int:id>', edit_item, name='edit_item'),
+    path('delete_item/<int:id>', delete_item, name='delete_item'),
+    path('complete_item/<int:id>', complete_item, name='complete_item'),
+
+    # path('todo_list/', ItemList.as_view(), name='todo_list')
 ]

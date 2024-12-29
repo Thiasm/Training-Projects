@@ -25,7 +25,6 @@ class CategoryList(ListView):
         self.object_list = self.get_queryset()
         context = self.get_context_data()
         if request.headers.get("HX-Request"):
-            print('HX-Request -> DONC render task_list')
             return render(request, "app/partials/category_list.html", context)
         return render(request, self.template_name, context)
     
@@ -46,6 +45,8 @@ class ItemList(ListView):
     template_name = 'app/todo_list.html'
     context_object_name = 'items'
 
+    ordering = ['-complete', '-created']
+
     def filter_queryset(self, queryset):
         search = self.request.GET.get("research")
         ordering = self.request.GET.get("ordering")
@@ -62,21 +63,18 @@ class ItemList(ListView):
             if 'title' in ordering: # Si le tri est basé sur le titre, utilise la fonction Lower pour trier en minuscule
                 ordering = ordering.replace('title', 'lower_title') # ????
                 queryset = queryset.annotate(lower_title=Lower('title'))
-            print('Ordering:', ordering)
-            return queryset.order_by(ordering)
-        return queryset.order_by('-complete', '-created')
+            queryset = queryset.order_by(ordering)
+        # order_by('-complete', '-created')
+        return queryset
 
     def get_queryset(self):
-        print('get_queryset')
         queryset = super().get_queryset()
         return self.filter_queryset(queryset)
 
     def get(self, request, *args, **kwargs):
-        print('get')
         self.object_list = self.get_queryset()
         context = self.get_context_data()
         if request.headers.get("HX-Request"):
-            print('HX-Request -> DONC render task_list')
             # FIX TASK_LIST OR TODO_LIST
             return render(request, "app/partials/task_list.html", context)
         return render(request, self.template_name, context)
@@ -93,13 +91,12 @@ def add_item(request):
         # FIX TASK OR ITEM
         item_title = request.POST.get('task_title') # Récupère l'input
 
-        # category_id = request.POST.get('category')  # Category ID from the form
-        # category = Category.objects.get(id=category_id)
-        # Item.objects.create(title = item_title, category=category) # Crée un objet Item et le sauvegarde
+        category_id = request.POST.get('category')  # Category ID from the form
+        category = Category.objects.get(id=category_id)
+
+        Item.objects.create(title = item_title, category=category) # Crée un objet Item et le sauvegarde
+        items = Item.objects.order_by('-complete', '-created')
         # .filter(category=category)
-        
-        Item.objects.create(title = item_title) # Crée un objet Item et le sauvegarde
-        items = Item.objects.all().order_by('-complete', '-created')
         return render(request, 'app/partials/task_list.html', {'items': items})
 
 @require_http_methods(['DELETE'])
@@ -121,7 +118,7 @@ def complete_item(request, id):
 def edit_item(request, id):
     item = get_object_or_404(Item, id = id)
     if request.method == 'GET':
-        return render(request, 'app/modals/edit_task_modal.html', {'item': item})
+        return render(request, 'app/modals/edit_item_modal.html', {'item': item})
     if request.method == 'POST':
         item.title = request.POST.get("item_title")
         item.description = request.POST.get("item_description")

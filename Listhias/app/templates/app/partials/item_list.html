@@ -1,0 +1,11 @@
+<div id='item-list'>
+    <ul class='grid grid-cols-4 gap-10 p-6'>
+        {% for item in items %}
+            {% include "app/partials/item.html" with item=item %}
+        {% empty %}
+            <h1 class="text-gray-800 font-bold text-base">
+                No Items available
+            </h1>
+        {% endfor %}
+    </ul>
+</div>

@@ -1,35 +1,30 @@
-<li id="task-item-{{ task.id }}" class="flex items-center gap-4 py-2 w-full">
+<li id="task-item-{{ item.id }}" class="flex items-center gap-4 py-2 w-full">
 
     <!-- Task Completion Checkbox -->
-    <input
-        type="checkbox"
-        hx-put={% url 'complete_task' task.id %}
-        {% comment %} hx-trigger="change" {% endcomment %}
+    <form
+        hx-post="{% url 'complete_item' item.id %}"
+        hx-trigger="change"
         hx-target="#task-list"
         hx-swap="outerHTML"
-        class='w-5 h-5'
-        aria-label="Mark task '{{ task.title }}' as complete"
-        {% if task.complete %}checked{% endif %}
-    />
+    >
+        {% csrf_token %}
+        <input
+            type="checkbox"
+            class='w-5 h-5'
+            aria-label="Mark task '{{ item.title }}' as complete"
+            {% if item.complete %}checked{% endif %}
+        />
+    </form>
 
     <!-- Edit Task Button -->
     <button
-        hx-get="{% url 'edit_task' task.id %}"
+        hx-get="{% url 'edit_item' item.id %}"
         hx-target="#modal-content"
         hx-swap="innerHTML"
         hx-on="htmx:afterRequest:openModal()"
         class="text-gray-800 hover:text-blue-800 font-bold text-base"
-        aria-label="Edit task '{{ task.title }}'"
+        aria-label="Edit task '{{ item.title }}'"
     >
-    {{task.title}}
+    {{item.title}}
     </button>
 </li>
-
-<script>
-    document.addEventListener("htmx:configRequest", function (event) {
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        if (csrfToken) {
-            event.detail.headers['X-CSRFToken'] = csrfToken; // Ajoute le token CSRF aux en-têtes
-        }
-    });
-</script>
