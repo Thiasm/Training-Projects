@@ -1,0 +1,78 @@
+<div class="p-3 relative">
+
+    <!-- Title -->
+    <h1 id="edit-item-title" class="font-bold text-center mb-4 text-lg text-gray-800">Edit Item</h1>
+
+    <!-- Form -->
+    <form
+        hx-post="{% url 'edit_item' category item.id %}"
+        hx-target="#item-{{ item.id }}"
+        hx-swap="outerHTML"
+        class="space-y-4"
+    >
+        {% csrf_token %}  
+        <!-- Item Title -->
+        <div class='flex-col flex'>
+            <label for="item-title" class="text-sm font-medium text-gray-700 pb-2">Title</label>
+            <text
+                id="item-title"
+                name="item_title"
+                class="w-full pl-3"
+                type="text"
+            >
+                {{ item.title }}
+            </text>
+        </div>
+
+        <!-- Item Description -->
+        <div class='flex flex-col'>
+            <label for="item-description" class="block text-sm font-medium text-gray-700 pb-2">Description</label>
+            <text
+                id="item-description"
+                name="item_description"
+                class="w-full block pl-3 text-sm"
+            >{{ item.description }}</text>
+        </div>
+
+        <!-- Item Complete Checkbox -->
+        <div class="flex items-center">
+            <input
+                type="checkbox"
+                id="item-complete"
+                name="item_complete"
+                class='w-4 h-4'
+                {% if item.complete %}checked{% endif %}
+            />
+            <label for="item-complete" class="text-sm font-medium ml-2 text-gray-700">Complete</label>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-center mt-6 space-x-6">
+
+            <!-- Delete Button -->
+            <button
+                type='button'
+                onclick="closeModal()"
+                aria-label="Delete Item"
+                hx-delete="{% url 'delete_item' category item.id %}"
+                hx-target="#item-list"
+                hx-swap="outerHTML"
+                hx-confirm="Are you sure ?"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                class="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded"
+            >
+                Delete
+            </button>
+
+            <!-- Save Button -->
+            <button
+                type='submit'
+                onclick="closeModalIfNotEmpty('item-title')"
+                class="bg-gray-600 hover:bg-gray-800 text-white py-2 px-4 rounded"
+                aria-label="Save Item"
+            >
+                Save
+            </button>
+        </div>
+    </form>
+</div>

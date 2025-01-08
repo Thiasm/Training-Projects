@@ -1,23 +1,22 @@
 <div class="p-3 relative">
 
     <!-- Title -->
-    <h1 id="edit-item-title" class="font-bold text-center mb-4 text-lg text-gray-800">Edit Item</h1>
+    <h1 id="edit-task-title" class="font-bold text-center mb-4 text-lg text-gray-800">Edit Task</h1>
 
     <!-- Form -->
     <form
-        hx-post="{% url 'edit_item' item.id %}"
-        hx-target="#task-item-{{ item.id }}"
+        hx-post="{% url 'edit_item' category item.id %}"
+        hx-target="#task-{{ item.id }}"
         hx-swap="outerHTML"
         class="space-y-4"
     >
-        {% csrf_token %}
-        
-        <!-- Item Title -->
+        {% csrf_token %}  
+        <!-- task Title -->
         <div>
-            <label for="item-title" class="text-sm font-medium text-gray-700">Title</label>
+            <label for="task-title" class="text-sm font-medium text-gray-700">Title</label>
             <input
-                id="item-title"
-                name="item_title"
+                id="task-title"
+                name="task_title"
                 class="w-full border rounded px-2 py-2"
                 type="text"
                 value="{{ item.title }}"
@@ -25,38 +24,38 @@
             />
         </div>  
 
-        <!-- Item Description -->
+        <!-- task Description -->
         <div>
-            <label for="item-description" class="block text-sm font-medium text-gray-700">Description</label>
+            <label for="task-description" class="block text-sm font-medium text-gray-700">Description</label>
             <textarea
-                id="item-description"
-                name="item_description"
+                id="task-description"
+                name="task_description"
                 class="w-full border rounded px-2 py-1"
                 rows="4"
             >{{ item.description }}</textarea>
         </div>
 
-        <!-- Item Complete Checkbox -->
-        <div class="flex items-center">
+        <!-- task Complete Checkbox -->
+        <div class="flex tasks-center">
             <input
                 type="checkbox"
-                id="item-complete"
-                name="item_complete"
+                id="task-complete"
+                name="task_complete"
                 class='w-4 h-4'
                 {% if item.complete %}checked{% endif %}
             />
-            <label for="item-complete" class="text-sm font-medium ml-2 text-gray-700">Complete</label>
+            <label for="task-complete" class="text-sm font-medium ml-2 text-gray-700">Complete</label>
         </div>
 
         <!-- Action Buttons -->
         <div class="flex justify-center mt-6 space-x-6">
 
             <!-- Delete Button -->
-            <button
+           <button
                 type='button'
                 onclick="closeModal()"
-                aria-label="Delete Item"
-                hx-delete="{% url 'delete_item' item.id %}"
+                aria-label="Delete task"
+                hx-delete="{% url 'delete_item' category item.id %}"
                 hx-target="#task-list"
                 hx-swap="outerHTML"
                 hx-confirm="Are you sure ?"
@@ -69,9 +68,9 @@
             <!-- Save Button -->
             <button
                 type='submit'
-                onclick="closeModalIfNotEmpty('item-title')"
+                onclick="closeModalIfNotEmpty('task-title')"
                 class="bg-gray-600 hover:bg-gray-800 text-white py-2 px-4 rounded"
-                aria-label="Save Item"
+                aria-label="Save task"
             >
                 Save
             </button>

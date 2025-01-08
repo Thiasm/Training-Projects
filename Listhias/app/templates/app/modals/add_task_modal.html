@@ -5,9 +5,10 @@
 
     <form
         id="add-task-form"
-        hx-post='/add_item/'
+        hx-post="{% url 'add_item' category %}"
         hx-target="#task-list"
         hx-swap="innerHTML"
+        hx-validate="oninput"
     >
         {% csrf_token %}
         <div class="rounded flex-col flex justify-center space-y-5 mt-5">
@@ -19,6 +20,7 @@
                 class="rounded px-4 py-2 text-center border w-full"
                 required
             >
+
             <button
                 type="submit"
                 class='rounded p-2 bg-gray-600 hover:bg-gray-800 text-white'

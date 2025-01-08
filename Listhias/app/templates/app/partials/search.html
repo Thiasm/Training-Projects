@@ -1,6 +1,6 @@
 <form 
     hx-get='.'
-    hx-target={{ target }}
+    hx-target='#{{ category_item }}-list'
     hx-swap='outerHTML'
     hx-trigger="input"
     class='flex items-center'
@@ -13,5 +13,6 @@
         placeholder="Search..."
         value='{{ request.GET.research }}'
         name='research'
+        onkeydown="return event.key != 'Enter'"
     />
 </form>

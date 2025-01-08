@@ -1,6 +1,5 @@
-{% comment %} Change GEA {% endcomment %}
 <form
-    hx-get="{% url gea %}"
+    hx-get="{% url 'add_item' category %}"
     hx-target="#modal-content"
     hx-swap="innerHTML"
     hx-on="htmx:afterRequest:openModal()"

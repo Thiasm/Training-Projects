@@ -3,6 +3,8 @@ from django.views.generic.list import ListView
 from django.views.decorators.http import require_http_methods
 from .models import Item, Category
 from django.db.models.functions import Lower
+from .utils import CategoryTemplateManager, ApiRequest
+from django.http import HttpResponse
 
 class CategoryList(ListView):
     model = Category
@@ -32,8 +34,7 @@ class CategoryList(ListView):
 @require_http_methods(['GET', 'POST'])
 def add_category(request):
     if request.method == 'GET':
-        context = { 'category_types': Category.CategoryTypes } # Add Category_List to the modal
-        return render(request, 'app/modals/add_category_modal.html', context)
+        return render(request, 'app/modals/add_category_modal.html', { 'category_types': Category.CategoryTypes })
     if request.method == 'POST':
         category_type = request.POST.get('category_type')
         category_title = request.POST.get('category_title')
@@ -43,88 +44,130 @@ def add_category(request):
 
 class ItemList(ListView):
     model = Item
-    template_name = 'app/todo_list.html'
+    template_name = 'app/base_list.html'
     context_object_name = 'items'
 
     def filter_queryset(self, queryset):
-        search = self.request.GET.get("research")
-        ordering = self.request.GET.get("ordering")
-    
-        # category_name = self.kwargs.get('category')
-        # category = get_object_or_404(Category, title=category_name)  # Find category by name
-        # if category:
-            # print('Filtred by Category:', category)
-            # return Item.objects.filter(category=category)
 
+        # FIX Get from context
+        category_name = self.kwargs.get('category')
+        category = get_object_or_404(Category, title=category_name)
+        if category:
+            queryset = queryset.filter(category=category)
+
+        search = self.request.GET.get("research")
         if search:
-            queryset = queryset.filter(title__icontains=search) # Filtre les tâches par titre
+            queryset = queryset.filter(title__icontains=search)
+
+        ordering = self.request.GET.get("ordering")
         if ordering in ['title', '-title', 'created', '-created', 'complete', '-complete']:
-            if 'title' in ordering: # Si le tri est basé sur le titre, utilise la fonction Lower pour trier en minuscule
-                ordering = ordering.replace('title', 'lower_title') # ????
+            if ordering == 'title' or ordering == '-title':
+                ordering = 'lower_title'
                 queryset = queryset.annotate(lower_title=Lower('title'))
-            print('Ordering:', ordering)
             return queryset.order_by(ordering)
+
         return queryset.order_by('-complete', '-created')
 
     def get_queryset(self):
-        print('get_queryset')
         queryset = super().get_queryset()
         return self.filter_queryset(queryset)
 
+    # WHAT IS CONTEXT ?
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # WHY ?
+        category_name = self.kwargs.get("category")
+        category = get_object_or_404(Category, title=category_name)
+        context["category"] = category
+        category_item = CategoryTemplateManager.get_category_item(category.type)
+        context["category_item"] = category_item
+        return context
+
     def get(self, request, *args, **kwargs):
-        print('get')
         self.object_list = self.get_queryset()
         context = self.get_context_data()
         if request.headers.get("HX-Request"):
-            print('HX-Request -> DONC render task_list')
-            # FIX TASK_LIST OR TODO_LIST
-            return render(request, "app/partials/task_list.html", context)
+            return render(request, f"app/partials/{context['category_item']}_list.html", context)
         return render(request, self.template_name, context)
 
-@require_http_methods(['GET', 'POST'])
-def add_item(request):
-    print('Add_Item')
-    if request.method == 'GET':
-        print('Add_Item GET')
-        # FIX ADD_TASK OR ADD_ITEM
-        return render(request, 'app/modals/add_task_modal.html')
-    if request.method == 'POST':
-        print('Add_Item POST')
-        # FIX TASK OR ITEM
-        item_title = request.POST.get('task_title') # Récupère l'input
+@require_http_methods(['GET'])
+def search_items(request, category):
+    category = get_object_or_404(Category, title=category)
+    base_url = category.get_api_url()
+    search_input = request.GET.get('item_title')
+    
+    # Get category type from the category model
+    category_type = category.type.lower()
+    
+    results = ApiRequest.get_api_search(base_url, search_input, category_type)
+    return render(request, 'app/partials/search_results.html', {
+        'results': results,
+        'category': category
+    })
 
-        # category_id = request.POST.get('category')  # Category ID from the form
-        # category = Category.objects.get(id=category_id)
-        # Item.objects.create(title = item_title, category=category) # Crée un objet Item et le sauvegarde
-        # .filter(category=category)
+@require_http_methods(['GET', 'POST'])
+def add_task(request, category):
+    category = get_object_or_404(Category, title=category)
+    category_item = CategoryTemplateManager.get_category_item(category.type)
+    if request.method == 'POST':
+        item_title = request.POST.get(f'{category_item}_title')
+        Item.objects.create(title = item_title, category=category) # Crée un objet Item et le sauvegarde
+        items = Item.objects.filter(category=category).order_by('-complete', '-created')  # Récupère la liste mise à jour des tâches
+        return render(request, f'app/partials/{category_item}_list.html', {'items': items, 'category': category})
+
+@require_http_methods(['GET', 'POST'])
+def add_item(request, category):
+    category = get_object_or_404(Category, title=category)
+    category_item = CategoryTemplateManager.get_category_item(category.type)
+    
+    if request.method == 'GET':
+        return render(request, f'app/modals/add_{category_item}_modal.html', {'category': category})
+
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        img = request.POST.get('image')
+        description = request.POST.get('description')
         
-        Item.objects.create(title = item_title) # Crée un objet Item et le sauvegarde
-        items = Item.objects.all().order_by('-complete', '-created')
-        return render(request, 'app/partials/task_list.html', {'items': items})
+        Item.objects.create(title=title, category=category, image=img, description=description)
+        items = Item.objects.filter(category=category).order_by('-complete', '-created')
+        return render(request, f'app/partials/{category_item}_list.html', {'items': items, 'category': category})
+    
+    return render(request, f'app/modals/add_{category_item}_modal.html', {'category': category})
 
 @require_http_methods(['DELETE'])
-def delete_item(request, id):
+def delete_item(request, id, category):
+    category = get_object_or_404(Category, title=category)
+    category_item = CategoryTemplateManager.get_category_item(category.type)
     item = get_object_or_404(Item, id = id)
     item.delete()
-    items = Item.objects.all().order_by('-complete', '-created')  # Récupère la liste mise à jour des tâches
-    return render(request, 'app/partials/task_list.html', {'items': items})
+    items = Item.objects.filter(category=category).order_by('-complete', '-created')  # Récupère la liste mise à jour des tâches
+    return render(request, f'app/partials/{category_item}_list.html', {'items': items, 'category': category})
 
 @require_http_methods(['POST'])
-def complete_item(request, id):
-    item = get_object_or_404(Item, id = id)
+def complete_item(request, id, category):
+    category = get_object_or_404(Category, title=category)
+    category_item = CategoryTemplateManager.get_category_item(category.type)
+    item = get_object_or_404(Item, id=id)
     item.complete = not item.complete
     item.save()
-    items = Item.objects.all().order_by('-complete', '-created')  # Récupère la liste mise à jour des tâches
-    return render(request, 'app/partials/task_list.html', {'items': items})
+    items = Item.objects.filter(category=category).order_by('-complete', '-created')  # Récupère la liste mise à jour des tâches
+    return render(request, f'app/partials/{category_item}_list.html', {'items': items, 'category': category})
 
 @require_http_methods(['GET', 'POST'])
-def edit_item(request, id):
+def edit_item(request, id, category):
+    category = get_object_or_404(Category, title=category)
+    category_item = CategoryTemplateManager.get_category_item(category.type)
     item = get_object_or_404(Item, id = id)
     if request.method == 'GET':
-        return render(request, 'app/modals/edit_task_modal.html', {'item': item})
+        return render(request, f'app/modals/edit_{category_item}_modal.html', {'item': item, 'category': category})
     if request.method == 'POST':
-        item.title = request.POST.get("item_title")
-        item.description = request.POST.get("item_description")
-        item.complete = 'item_complete' in request.POST
+        item.title = request.POST.get(f'{category_item}_title')
+        item.description = request.POST.get(f'{category_item}_description')
+        item.complete = f'{category_item}_complete' in request.POST
         item.save()
-        return render(request, 'app/partials/task.html', {'item': item})
+        return render(request, f'app/partials/{category_item}.html', {'item': item, 'category': category})
+
+def custom_page_not_found_view(request, exception):
+    response = render(request, 'app/404.html', {})
+    response.status_code = 404
+    return response

@@ -32,7 +32,6 @@ function closeDropdownMenuOnClickOutside(event) {
 }
 
 function closeModal() {
-    console.log('close modal');
     const modal = document.getElementById("modal");
     modal.classList.add("hidden");
     modal.classList.remove("show");

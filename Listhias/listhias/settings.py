@@ -12,12 +12,16 @@ SECRET_KEY = 'django-insecure-rk&#ssi-!3!udbjo=x427@ue3w3s5e13mu7^&iy^l9sw3@_ni$
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# Les Images chargent plus vite en mode debug
 
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    '.localhost',
+]
 
 TAILWIND_APP_NAME = 'theme'
 
@@ -47,7 +51,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR/'templates',
+            BASE_DIR / 'templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -110,7 +114,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'app/static/'
-STATICFILES_DIRS = [BASE_DIR / "app/static/app", BASE_DIR / "app/static/images"]
+
+STATICFILES_DIRS = [
+    BASE_DIR / "app/static/app",
+    BASE_DIR / "app/static/images"
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
