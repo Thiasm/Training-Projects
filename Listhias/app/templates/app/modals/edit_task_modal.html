@@ -1,11 +1,8 @@
 <div class="p-3 relative">
-
-    <!-- Title -->
     <h1 id="edit-task-title" class="font-bold text-center mb-4 text-lg text-gray-800">Edit Task</h1>
 
-    <!-- Form -->
     <form
-        hx-post="{% url 'edit_item' category item.id %}"
+        hx-post="{% url 'edit_task' category item.id %}"
         hx-target="#task-{{ item.id }}"
         hx-swap="outerHTML"
         class="space-y-4"

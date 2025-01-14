@@ -6,18 +6,22 @@ function openModal() {
 }
 
 function openDropdownMenu() {
+    const dropdownMenu = document.getElementById('dropdownMenu');
     const dropdownButton = document.getElementById('filter-button');
     const isHidden = dropdownMenu.classList.toggle('hidden');
 
     if (!isHidden) {
-        // Add the event listener to close the dropdown when clicking outside
         document.addEventListener('click', closeDropdownMenuOnClickOutside);
         dropdownButton.classList.add('bg-gray-300');
     } else {
-        // Remove the event listener when dropdown is hidden
         document.removeEventListener('click', closeDropdownMenuOnClickOutside);
         dropdownButton.classList.remove('bg-gray-300');
     }
+}
+
+function closeDropdownMenu() {
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    dropdownMenu.classList.add('hidden');
 }
 
 function closeDropdownMenuOnClickOutside(event) {
@@ -46,11 +50,8 @@ function closeModalOnOutsideClick(event) {
 }
 
 function closeModalIfNotEmpty(inputId) {
-    console.log('close modal if not empty');
     const inputField = document.getElementById(inputId);
-    // console.log(inputField);
-    // console.log(inputId);
-    
+
     if (inputField.value != "") {
         closeModal(); 
     }

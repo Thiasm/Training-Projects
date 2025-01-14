@@ -1,7 +1,7 @@
 <div id='category-list' class='w-full'>
     <ul class='flex flex-wrap gap-10 p-6 w-full justify-start'>
         {% for category in categories %}
-            {% include "app/partials/category.html" with category=category %}
+            {% include "app/pages/categories/category.html" %}
         {% empty %}
             <h1 class="text-gray-800 font-bold text-base">
                 No Category available

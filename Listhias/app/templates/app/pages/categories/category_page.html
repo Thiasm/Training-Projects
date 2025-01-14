@@ -22,11 +22,11 @@
                 <h1 class='font-bold text-2xl text-white'>Category</h1>
             </div>
             <div class='flex'>
-                {% include "app/partials/search.html" with target='#category-list' %}
+                {% include "app/partials/search.html" with category_item='category' %}
             </div>
         </div>
         <div class='flex justify-center w-full pt-5'>
-            {% include "app/partials/category_list.html" %}
+            {% include "app/pages/categories/category_list.html" %}
         </div>
     </div>
 {% endblock %}

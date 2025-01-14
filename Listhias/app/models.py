@@ -39,12 +39,18 @@ class Category(models.Model):
         return self.items.count()
     
 class Item(models.Model):
+    api_id = models.IntegerField(null = True)
     title = models.CharField(max_length = 50)
     description = models.TextField(blank = True)
+    user_note = models.TextField(blank = True)
+    image = models.URLField(max_length = 200, blank = True)
+    user_grade = models.IntegerField(null = True)
+    grade = models.FloatField(null = True)
+    release_year = models.IntegerField(null = True)
     complete = models.BooleanField(default = False)
     created = models.DateTimeField(auto_now_add = True)
-    image = models.URLField(max_length = 200, blank = True)
     category = models.ForeignKey(Category, related_name = "items", on_delete = models.CASCADE)
+    # additional_info = models.JSONField(blank = True)
 
     def __str__(self):
         return self.title

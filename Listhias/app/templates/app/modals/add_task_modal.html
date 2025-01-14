@@ -1,16 +1,15 @@
 <div>
-
-    <!-- Title -->
     <h1 id="add-task-title" class="font-bold text-center text-lg text-gray-800">Add Task</h1>
 
     <form
         id="add-task-form"
-        hx-post="{% url 'add_item' category %}"
+        hx-post="{% url 'add_task' category %}"
         hx-target="#task-list"
         hx-swap="innerHTML"
         hx-validate="oninput"
     >
         {% csrf_token %}
+        <!-- Task Title -->
         <div class="rounded flex-col flex justify-center space-y-5 mt-5">
             <input
                 name="task_title"
@@ -21,6 +20,7 @@
                 required
             >
 
+            <!-- Add Task Button -->
             <button
                 type="submit"
                 class='rounded p-2 bg-gray-600 hover:bg-gray-800 text-white'

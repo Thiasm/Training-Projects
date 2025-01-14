@@ -2,7 +2,7 @@
 
     <!-- Task Completion Checkbox -->
     <form
-        hx-post="{% url 'complete_item' category item.id %}"
+        hx-post="{% url 'complete_task' category item.id %}"
         hx-trigger="change"
         hx-target="#task-list"
         hx-swap="outerHTML"
@@ -18,7 +18,7 @@
 
     <!-- Edit Task Button -->
     <button
-        hx-get="{% url 'edit_item' category item.id %}"
+        hx-get="{% url 'edit_task' category item.id %}"
         hx-target="#modal-content"
         hx-swap="innerHTML"
         hx-on="htmx:afterRequest:openModal()"

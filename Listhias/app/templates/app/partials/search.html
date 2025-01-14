@@ -1,6 +1,6 @@
 <form 
     hx-get='.'
-    hx-target='#{{ category_item }}-list'
+    hx-target='#{{ item_type }}-list'
     hx-swap='outerHTML'
     hx-trigger="input"
     class='flex items-center'
@@ -11,8 +11,9 @@
     <input
         class='rounded border pl-5 py-1.5 ml-3'
         placeholder="Search..."
-        value='{{ request.GET.research }}'
+        value='{{ search_query }}'
         name='research'
         onkeydown="return event.key != 'Enter'"
     />
+    <input type="hidden" name="ordering" value="{{ order }}" />
 </form>

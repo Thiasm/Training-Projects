@@ -15,9 +15,10 @@
     <form
         id="dropdown-form"
         hx-get='.'
-        hx-target='#{{ category_item }}-list'
+        hx-target='#{{ item_type }}-list'
         hx-swap='outerHTML'
         hx-trigger="submit"
+        onsubmit="closeDropdownMenu()"
     >
         <ul class="py-1">
             <li>
@@ -28,14 +29,6 @@
                     type="submit"
                 >
                     Name
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        {%
-                            Up = "M5 15l7-7 7 7"
-                            Down = "M19 9l-7 7-7-7"
-                        %}
-                        {% comment %} <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /> {% endcomment %}
-                        {% comment %} <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /> {% endcomment %}
-                    </svg>
                 </button>
             </li>
             <li>
@@ -58,5 +51,15 @@
                 </button>
             </li>
         </ul>
+        <input type="hidden" name="research" value="{{ search_query }}" />
     </form>
 </div>
+
+{% comment %} <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    {%
+        Up = "M5 15l7-7 7 7"
+        Down = "M19 9l-7 7-7-7"
+    %}
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+</svg> {% endcomment %}

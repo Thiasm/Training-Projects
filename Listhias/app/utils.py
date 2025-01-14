@@ -1,9 +1,7 @@
-class CategoryTemplateManager:    
+class Utils:    
     @staticmethod
-    def get_category_item(category_type):
-        """Returns the appropriate form field name for the title input"""
+    def get_item_type(category_type):
         return 'task' if category_type == 'todo_list' else 'item'
-
 
 import requests
 
@@ -22,13 +20,16 @@ class ApiRequest:
             results = json_data.get('results', json_data)
             limited_results = results[:5]
             results = []
-
+            
             for current_movie in limited_results:
+                print(current_movie)
                 result = {}
-                result['formatted_release_date'] = ApiRequest.format_release_date(current_movie.get('release_date'))
-                result['formatted_title'] = ApiRequest.format_title(current_movie.get('title'), current_movie.get('original_title'))
-                result['formatted_image'] = "https://image.tmdb.org/t/p/w500" + str(current_movie.get('poster_path'))
-                result['formatted_description'] = current_movie.get('overview')
+                result['api_id'] = current_movie.get('id')
+                result['title'] = ApiRequest.format_title(current_movie.get('title'), current_movie.get('original_title'))
+                result['description'] = current_movie.get('overview')
+                result['image'] = "https://image.tmdb.org/t/p/w500" + str(current_movie.get('poster_path'))
+                result['grade'] = current_movie.get('vote_average')
+                result['release_year'] = ApiRequest.format_release_date(current_movie.get('release_date'))
                 results.append(result)
             return results
         return []
@@ -64,3 +65,6 @@ class ApiRequest:
         if original_title and original_title != title:
             formated_title = f"{title} ({original_title})"
         return formated_title
+
+
+        # {'adult': False, 'backdrop_path': '/XuvGhhRp3DqpSrD5b0QS1d6CW0.jpg', 'genre_ids': [27, 18], 'id': 135195, 'original_language': 'th', 'original_title': 'P', 'overview': 'An orphan girl taught magic by her sick grandma must find work in seedy Bangkok, where she encounters a number of unsavory characters. She uses the magical skills her grandmother taught her to her advantage and to increasingly horrific consequences.', 'popularity': 8.593, 'poster_path': '/z5CtmnbGyek9Yv40YecPlHXpy3z.jpg', 'release_date': '2005-10-07', 'title': 'P', 'video': False, 'vote_average': 5.843, 'vote_count': 89}
