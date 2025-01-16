@@ -33,16 +33,19 @@
         </div>
 
         <!-- task Complete Checkbox -->
-        <div class="flex tasks-center">
+        <label class="flex items-center relative inline-flex cursor-pointer">
             <input
-                type="checkbox"
                 id="task-complete"
                 name="task_complete"
-                class='w-4 h-4'
+                type="checkbox"
+                class='ml-3 peer sr-only'
+                
                 {% if item.complete %}checked{% endif %}
             />
+            <div class="peer h-6 w-11 rounded-full border bg-slate-200 after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-green-300"></div>
             <label for="task-complete" class="text-sm font-medium ml-2 text-gray-700">Complete</label>
-        </div>
+        </label>
+
 
         <!-- Action Buttons -->
         <div class="flex justify-center mt-6 space-x-6">

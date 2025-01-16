@@ -5,6 +5,7 @@ from .models import Item, Category
 from django.db.models.functions import Lower
 from .utils import Utils, ApiRequest
 from django.http import JsonResponse
+from django.urls import reverse
 
 class CategoryList(ListView):
     model = Category
@@ -40,6 +41,23 @@ def add_category(request):
         categories = Category.objects.all()
         categories = categories.order_by('-created')
         return render(request, 'app/pages/categories/category_list.html', {'categories': categories})
+
+@require_http_methods(['GET', 'POST'])
+def edit_category(request, category):
+    category = get_object_or_404(Category, title = category)
+    if request.method == 'GET':
+        return render(request, 'app/modals/edit_category_modal.html', { 'category': category })
+    if request.method == 'POST':
+        category.title = request.POST.get('category_title')
+        category.save()
+        return JsonResponse({"success": True}, headers={"HX-Redirect": reverse("items", kwargs={'category': category})})
+
+@require_http_methods(['DELETE'])
+def delete_category(request, category):
+    print('deleted')
+    category = get_object_or_404(Category, title = category)
+    category.delete()
+    return JsonResponse({"success": True}, headers={"HX-Redirect": reverse("categories")})
 
 class ItemList(ListView):
     model = Item
@@ -193,9 +211,11 @@ def edit_item(request, id, category):
         })
     if request.method == 'POST':
         item.complete = 'item_complete' in request.POST
-        item.user_note = request.POST.get('item_note')
-        if not item.complete and item.user_grade:
+        if not item.complete and (item.user_grade or item.user_note):
             item.user_grade = None
+            item.user_note = ""
+        elif item.complete:
+            item.user_note = request.POST.get('item_note')
         item.save()
         return render(request, 'app/pages/items/item.html', {'item': item, 'category': category})
 

@@ -3,20 +3,7 @@
     <div>
         <div class='flex justify-between items-center p-3 bg-gray-700'>
             <div class='flex'>
-                <form
-                    hx-get="{% url 'add_category' %}"
-                    hx-target="#modal-content"
-                    hx-swap="innerHTML"
-                    hx-on="htmx:afterRequest:openModal()"
-                >
-                    {% csrf_token %}
-                    <button
-                        type="submit"
-                        class='rounded font-bold bg-gray-800 hover:bg-gray-900 text-white px-6 py-3'
-                    >
-                        Add
-                    </button>
-                </form>
+                {% include "app/partials/add_category.html" %}    
             </div>
             <div class='flex'>
                 <h1 class='font-bold text-2xl text-white'>Category</h1>
