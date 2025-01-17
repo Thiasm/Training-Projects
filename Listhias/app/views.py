@@ -37,10 +37,11 @@ def add_category(request):
     if request.method == 'POST':
         category_type = request.POST.get('category_type')
         category_title = request.POST.get('category_title')
+        if Category.objects.filter(title = category_title).exists():
+            return render(request, 'app/error/error_badge.html', { 'error_message': 'Category already exists.' })
         Category.objects.create(title = category_title, type = category_type)
-        categories = Category.objects.all()
-        categories = categories.order_by('-created')
-        return render(request, 'app/pages/categories/category_list.html', {'categories': categories})
+        return JsonResponse({}, headers={"HX-Redirect": reverse("categories")})
+    return JsonResponse({"error": "Invalid request."}, status=400)
 
 @require_http_methods(['GET', 'POST'])
 def edit_category(request, category):
@@ -48,13 +49,15 @@ def edit_category(request, category):
     if request.method == 'GET':
         return render(request, 'app/modals/edit_category_modal.html', { 'category': category })
     if request.method == 'POST':
-        category.title = request.POST.get('category_title')
+        category_title = request.POST.get('category_title')
+        if Category.objects.filter(title = category_title).exists():
+            return render(request, 'app/error/error_badge.html', { 'error_message': 'Category already exists.' })
+        category.title = category_title
         category.save()
         return JsonResponse({"success": True}, headers={"HX-Redirect": reverse("items", kwargs={'category': category})})
 
 @require_http_methods(['DELETE'])
 def delete_category(request, category):
-    print('deleted')
     category = get_object_or_404(Category, title = category)
     category.delete()
     return JsonResponse({"success": True}, headers={"HX-Redirect": reverse("categories")})
@@ -71,12 +74,10 @@ class ItemList(ListView):
             queryset = queryset.filter(category=category)
 
         search = self.request.GET.get("research")
-        print('search', search)
         if search:
             queryset = queryset.filter(title__icontains=search)
 
         ordering = self.request.GET.get("ordering")
-        print('ordering', ordering)
         if ordering:
             if ordering == 'title' or ordering == '-title':
                 ordering = 'lower_title'
@@ -113,6 +114,7 @@ class ItemList(ListView):
 def search_items(request, category):
     category = get_object_or_404(Category, title=category)
     base_url = category.get_api_url()
+    print(base_url)
     search_input = request.GET.get('item_title')
     if not search_input:
         return render(request, 'app/modals/modal.html', { 'category': category })
@@ -121,7 +123,6 @@ def search_items(request, category):
     return render(request, 'app/partials/search_results.html', { 'results': results, 'category': category })
 
 def add_note(request, category, id):
-    print('add note')
     category = get_object_or_404(Category, title=category)
     item = get_object_or_404(Item, id=id)
     return render(request, 'app/modals/add_note_modal.html', { 'category': category, 'item': item })

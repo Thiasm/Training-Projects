@@ -8,6 +8,17 @@ import requests
 class ApiRequest:
 
     @staticmethod
+    def search_animes(base_url, query):
+        clientId = 'b1bad1804f4283e7c95c111bda12a611'
+        clientSecret = '3cb749a8eb2b058a8513292aff3e6cc39746d220cbd99d6ec593a813dff7937e'
+        print('search animes')
+        url = 'https://myanimelist.net/v1/oauth2/authorize'
+        print(url)
+        response = requests.get(url)
+        print(response.text)        
+        return []    
+
+    @staticmethod
     def search_movies(base_url, query):
         url = base_url + "?query={}".format(query)
         headers = {
@@ -42,6 +53,7 @@ class ApiRequest:
     def get_api_search(base_url, query, category_type):
         search_methods = {
             'movie': ApiRequest.search_movies,
+            'anime': ApiRequest.search_animes,
             # 'game': ApiRequest.search_games,
         }
         
